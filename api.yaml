@@ -1,0 +1,175 @@
+swagger: '2.0'
+info:
+  description: User game client API specification
+  version: '1.0'
+  title: UGC API
+schemes: [http]
+
+basePath: /private/rest
+consumes: [application/json]
+produces: [application/json]
+
+paths:
+
+  '/game/{id}':
+
+    get:
+      tags: [game character resource]
+      summary: create endpoint
+      operationId: createEndpoint
+      description: Returns game character by id
+      parameters:
+        - $ref: '#/parameters/character-id'
+      responses:
+        201:
+          description: Game character details
+          schema:
+            $ref: '#/definitions/character-output'
+        default:
+          $ref: '#/responses/unexpected-error'
+
+  '/game':
+
+    post:
+      tags: [game character resource]
+      summary: create game character
+      parameters:
+        - $ref: '#/parameters/create-character-input'
+      responses:
+        201:
+          description: Game character details
+          schema:
+            $ref: '#/definitions/character-output'
+        default:
+          $ref: '#/responses/unexpected-error'
+
+  '/user/my':
+
+    get:
+      tags: [user profile resource]
+      summary: get user profile
+      description: Returns user profile for current user (token)
+      responses:
+        200:
+          description: user profile
+          schema:
+            $ref: '#/definitions/user-output'
+        default:
+          $ref: '#/responses/unexpected-error'
+
+parameters:
+
+  character-id:
+    required: true
+    name: id
+    in: path
+    type: string
+
+  create-character-input:
+    name: body
+    in: body
+    schema:
+      $ref: '#/definitions/character-input'
+
+definitions:
+
+  character-input:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        maxLength: 17
+        minLength: 1
+        type: string
+
+  character-output:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      inAdventure:
+        type: boolean
+      isFighting:
+        type: boolean
+      isResting:
+        type: boolean
+      currentAction:
+        type: string
+      progress:
+        $ref: '#/definitions/progress'
+      stats:
+        $ref: '#/definitions/stats'
+      gameInventory:
+        $ref: '#/definitions/inventory'
+      userId:
+        type: string
+
+  user-output:
+    type: object
+    properties:
+      username:
+        type: string
+      permissions:
+        type: array
+        items:
+          type: string
+
+
+  inventory:
+    type: object
+    properties:
+      gold:
+        type: integer
+      healingHitPointItems:
+        type: integer
+      healingManaPointItems:
+        type: integer
+      equipment:
+        type: array
+        items:
+          type: object
+
+  stats:
+    type: object
+    properties:
+      power:
+        type: integer
+      agility:
+        type: integer
+      intelligence:
+        type: integer
+      hitPoints:
+        type: integer
+      manaPoints:
+        type: integer
+      attack:
+        type: integer
+
+  progress:
+    type: object
+    properties:
+      currentExp:
+        type: integer
+      level:
+        type: integer
+      targetExp:
+        type: integer
+
+  error-message:
+    type: object
+    properties:
+      error-code:
+        type: integer
+      error-message:
+        type: string
+      error-auxiliary-message:
+        type: string
+
+responses:
+  unexpected-error:
+    description: unexpected error
+    schema:
+      $ref: '#/definitions/error-message'

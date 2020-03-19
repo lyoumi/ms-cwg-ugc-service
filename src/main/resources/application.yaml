@@ -1,0 +1,35 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: rest
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
+    appname: ${spring.application.name}
+    health-check-url-path: ${management.endpoints.web.base-path}/${management.endpoints.web.path-mapping.health}
+
+
+services:
+  core:
+    instance:
+      name: core
+  auth:
+    instance:
+      name: auth_server
+
+management:
+  endpoints:
+    web:
+      base-path: /public
+      path-mapping:
+        health: health-check
+  endpoint:
+    health:
+      show-details: always
+
+debug: true
